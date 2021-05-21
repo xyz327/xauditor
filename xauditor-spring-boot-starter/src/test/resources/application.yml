@@ -1,0 +1,7 @@
+spring:
+    applicaiton:
+        name: xaduitor-app
+    profiles:
+        active: test
+xaduitor:
+    controllerAdvice: true
