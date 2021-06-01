@@ -37,7 +37,7 @@ public class XAduitTest {
         MvcResult mvcResult = MockMvcBuilders.webAppContextSetup(webApplicationContext)
 
             .build()
-            .perform(MockMvcRequestBuilders.post("/xaduitor").queryParam("world", "world").principal(principal))
+            .perform(MockMvcRequestBuilders.post("/xauditor").queryParam("world", "world").principal(principal))
             .andReturn();
     }
 
@@ -53,7 +53,7 @@ public class XAduitTest {
         MvcResult mvcResult = MockMvcBuilders.webAppContextSetup(webApplicationContext)
 
             .build()
-            .perform(MockMvcRequestBuilders.post("/no-xaduitor").queryParam("world", "world").principal(principal))
+            .perform(MockMvcRequestBuilders.post("/no-xauditor").queryParam("world", "world").principal(principal))
             .andReturn();
     }
 
@@ -69,7 +69,7 @@ public class XAduitTest {
         MvcResult mvcResult = MockMvcBuilders.webAppContextSetup(webApplicationContext)
 
             .build()
-            .perform(MockMvcRequestBuilders.post("/async-xaduitor").queryParam("world", "world").principal(principal))
+            .perform(MockMvcRequestBuilders.post("/async-xauditor").queryParam("world", "world").principal(principal))
             .andReturn();
     }
 }

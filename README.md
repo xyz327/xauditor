@@ -20,9 +20,11 @@ spring:
         name: xaduitor-app
     profiles:
         active: test
-xaduitor:
+xauditor:
     # 是否拦截@PostMapping 等注解
     controllerAdvice: true
+    # 是否同步输出
+    sync: true
 ```
 
 ## 基础使用
@@ -32,7 +34,7 @@ xaduitor:
 @RequestMapping()
 public class TestController {
     
-    @PostMapping("xaduitor")
+    @PostMapping("xauditor")
     @XAuditor
     public String test(String world) {
         return "hello" + world;
@@ -92,7 +94,7 @@ public class XAduitorConfig{
 @RestController
 @RequestMapping()
 public class TestController {
-    @PostMapping("async-xaduitor")
+    @PostMapping("async-xauditor")
     @XAuditor(sync = false)
     public String asyncXAduitor(String world) {
         return "hello" + world;

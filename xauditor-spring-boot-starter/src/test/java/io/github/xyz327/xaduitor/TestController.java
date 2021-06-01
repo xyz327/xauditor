@@ -13,18 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping()
 public class TestController {
 
-    @PostMapping("xaduitor")
+    @PostMapping("xauditor")
     @XAuditor
     public String test(String world) {
         return "hello" + world;
     }
 
-    @PostMapping("no-xaduitor")
+    @PostMapping("no-xauditor")
     public String noXAduitor(String world) {
         return "hello" + world;
     }
 
-    @PostMapping("async-xaduitor")
+    @PostMapping("async-xauditor")
     @XAuditor(sync = false)
     public String asyncXAduitor(String world) {
         return "hello" + world;
