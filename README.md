@@ -87,6 +87,7 @@ public class XAduitorConfig{
 ```
 ## 异步输出
 
+>使用 ` @XAuditor(sync = false)`
 ```java
 @RestController
 @RequestMapping()
@@ -98,6 +99,12 @@ public class TestController {
     }
 }
 ```
+> 全局配置默认为异步输出
+```yaml
+xauditor:
+    sync: false
+```
+
 ### 自定义异步输出线程池  
 > 实现`io.github.xyz327.xauditor.XAuditorExecutorProvider`
 ```java

@@ -8,8 +8,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since 2021/5/21 4:35 下午
  */
 @Data
-@ConfigurationProperties(prefix = "xaduitor")
+@ConfigurationProperties(prefix = "xauditor")
 public class XAduitorConfigurationProperties {
     private boolean controllerAdvice;
     private String actionDetail;
+    private boolean sync = true;
 }

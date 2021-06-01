@@ -3,5 +3,6 @@ spring:
         name: xaduitor-app
     profiles:
         active: test
-xaduitor:
+xauditor:
     controllerAdvice: true
+    sync: true

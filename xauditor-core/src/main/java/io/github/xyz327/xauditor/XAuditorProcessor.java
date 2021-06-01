@@ -8,6 +8,7 @@ import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -42,6 +43,8 @@ public class XAuditorProcessor implements InitializingBean {
     private XAuditorExecutorProvider executorProvider;
     private Executor executor;
 
+    @Value("${xauditor.sync:true}")
+    private Boolean sync;
     /**
      * 处理 AOP 拦截，生成 audit 信息
      *
@@ -73,7 +76,11 @@ public class XAuditorProcessor implements InitializingBean {
 
         XAuditorInfo xAuditorInfo = xAuditorInfoProvider.getXAuditorInfo(proceedingJoinPoint, methodSignature, xAuditor, httpRequest, principal);
 
-        boolean sync = xAuditor.sync();
+        boolean sync = this.sync;
+        if(sync){
+            // 为同步时才去判断注解配置
+            sync = xAuditor.sync();
+        }
         try {
             Object proceed = proceedingJoinPoint.proceed(args);
             if (!sync) {
