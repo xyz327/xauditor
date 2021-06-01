@@ -1,4 +1,4 @@
-# X-Aduitor
+# X-Auditor
 
 > 基于 spring aop 对 spring mvc 的请求做拦截。输出审计信息(用户操作接口以及返回数据).
 
@@ -85,6 +85,36 @@ public class XAduitorConfig{
     }
 }
 ```
+## 异步输出
+
+```java
+@RestController
+@RequestMapping()
+public class TestController {
+    @PostMapping("async-xaduitor")
+    @XAuditor(sync = false)
+    public String asyncXAduitor(String world) {
+        return "hello" + world;
+    }
+}
+```
+### 自定义异步输出线程池  
+> 实现`io.github.xyz327.xauditor.XAuditorExecutorProvider`
+```java
+@Configuration
+public class XAduitorConfig{
+   @Bean
+   public XAuditorExecutorProvider xAuditorExecutorProvider(){
+       return new XAuditorExecutorProvider() {
+           @Override
+           public Executor getExecutor() {
+               return Executors.newSingleThreadExecutor();
+           }
+       };
+   }
+}
+```
+
 
 ## 自定义用户信息解析(从 http 请求中获取当前用户)
 

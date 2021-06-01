@@ -56,4 +56,20 @@ public class XAduitTest {
             .perform(MockMvcRequestBuilders.post("/no-xaduitor").queryParam("world", "world").principal(principal))
             .andReturn();
     }
+
+    @Test
+    @SneakyThrows
+    public void asyncXAduitor() {
+        Principal principal = new Principal() {
+            @Override
+            public String getName() {
+                return "xaduit测试用户";
+            }
+        };
+        MvcResult mvcResult = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+
+            .build()
+            .perform(MockMvcRequestBuilders.post("/async-xaduitor").queryParam("world", "world").principal(principal))
+            .andReturn();
+    }
 }

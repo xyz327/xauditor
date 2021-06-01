@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * @author <a href="mailto:xyz327@outlook.com">xizhou</a>
@@ -23,14 +25,4 @@ public class XAduitTestApp {
     }
 
 
-    @Bean
-    public XAuditorInfoProvider    xAuditorInfoProvider() {
-        return new XAuditorInfoProvider   () {
-
-            @Override
-            public XAuditorInfo getXAuditorInfo(ProceedingJoinPoint proceedingJoinPoint, MethodSignature methodSignature, XAuditor xAuditor, HttpServletRequest httpRequest, Principal principal) {
-                return XAuditorInfo.builder().build();
-            }
-        };
-    }
 }

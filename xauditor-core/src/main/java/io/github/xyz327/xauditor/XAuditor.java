@@ -40,11 +40,4 @@ public @interface XAuditor {
      * @return
      */
     boolean ignore() default false;
-
-    /**
-     * 没有用户信息时跳过
-     *
-     * @return
-     */
-    boolean skipNoneUser() default false;
 }

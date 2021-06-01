@@ -1,11 +1,6 @@
 package io.github.xyz327.xauditor;
 
-import io.github.xyz327.xauditor.impl.DefaultXAuditorDetailResolver;
-import io.github.xyz327.xauditor.impl.DefaultXAuditorInfoProvider;
-import io.github.xyz327.xauditor.impl.DefaultXAuditorPrincipalProvider;
-import io.github.xyz327.xauditor.impl.Slf4JXAuditorCreator;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import io.github.xyz327.xauditor.impl.*;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -24,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.concurrent.Executor;
 
 /**
  * @author <a href="mailto:xyz327@outlook.com">xizhou</a>
@@ -43,6 +38,9 @@ public class XAuditorProcessor implements InitializingBean {
     private XAuditorPrincipalProvider xAuditorPrincipalProvider;
     @Setter(onMethod_ = {@Autowired(required = false)})
     private XAuditorInfoProvider xAuditorInfoProvider;
+    @Setter(onMethod_ = {@Autowired(required = false)})
+    private XAuditorExecutorProvider executorProvider;
+    private Executor executor;
 
     /**
      * 处理 AOP 拦截，生成 audit 信息
@@ -72,23 +70,40 @@ public class XAuditorProcessor implements InitializingBean {
         }
         Principal principal = principalOptional.get();
 
+
         XAuditorInfo xAuditorInfo = xAuditorInfoProvider.getXAuditorInfo(proceedingJoinPoint, methodSignature, xAuditor, httpRequest, principal);
 
-
+        boolean sync = xAuditor.sync();
         try {
             Object proceed = proceedingJoinPoint.proceed(args);
-            String actionDetail = xAuditorDetailResolver.resolve(xAuditor, xAuditorInfo, proceed);
-            xAuditorInfo.setActionDetail(actionDetail);
-            // before 没有异常的才执行 post
-            triggerPostProcess(xAuditorInfo);
+            if (!sync) {
+                executor.execute(() -> {
+                    triggerPostProcess(xAuditor, xAuditorInfo, proceed);
+                });
+            } else {
+                triggerPostProcess(xAuditor, xAuditorInfo, proceed);
+            }
             return proceed;
         } catch (Throwable e) {
-            triggerThrowProcess(xAuditorInfo, e);
+            if (!sync) {
+                executor.execute(() -> {
+                    triggerThrowProcess(xAuditorInfo, e);
+                });
+            } else {
+                triggerThrowProcess(xAuditorInfo, e);
+            }
             throw e;
         } finally {
             // finally
             triggerFinallyProcess(xAuditorInfo);
         }
+    }
+
+    private void triggerPostProcess(XAuditor xAuditor, XAuditorInfo xAuditorInfo, Object proceed) {
+        String actionDetail = xAuditorDetailResolver.resolve(xAuditor, xAuditorInfo, proceed);
+        xAuditorInfo.setActionDetail(actionDetail);
+        // before 没有异常的才执行 post
+        triggerPostProcess(xAuditorInfo);
     }
 
     private void triggerFinallyProcess(XAuditorInfo xAuditorInfo) {
@@ -165,5 +180,11 @@ public class XAuditorProcessor implements InitializingBean {
         if (xAuditorPrincipalProvider == null) {
             xAuditorPrincipalProvider = new DefaultXAuditorPrincipalProvider();
         }
+
+        if (executorProvider == null) {
+            executorProvider = new DefaultXAuditorExecutorProvider();
+        }
+
+        executor = executorProvider.getExecutor();
     }
 }

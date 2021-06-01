@@ -23,4 +23,10 @@ public class TestController {
     public String noXAduitor(String world) {
         return "hello" + world;
     }
+
+    @PostMapping("async-xaduitor")
+    @XAuditor(sync = false)
+    public String asyncXAduitor(String world) {
+        return "hello" + world;
+    }
 }
